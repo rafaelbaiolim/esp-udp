@@ -152,7 +152,7 @@ void processarPacoteUDP() {
   }
 
   if (comando.equals(OFF_MOTOR_1)) {
-    //digitalWrite(MOTOR_1, HIGH);
+    //digitalWrite(MOTOR_1, LOW);
     enviarDadosViaUDP("MOTOR 1 DESLIGADO");
   }
 
