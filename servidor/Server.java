@@ -66,7 +66,7 @@ public class Server {
                 enviarComandoArduino(serverSocket, receivePacket.getAddress(),
                         comandos[random.nextInt(comandos.length)]);
             }catch(Exception ex){
-		//só envia um comando, quando recebe a distância do ultrassonico
+		      //só envia um comando quando recebe a distância do ultrassonico
             } 
         }
     }
