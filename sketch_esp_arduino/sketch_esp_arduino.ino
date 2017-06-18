@@ -49,17 +49,16 @@ void setup() {
 }
 
 void loop() {
+  //Envia as informações do módulo ultrassonico
+  enviarDadosUltrassonico();
+  
   //Pega um pacote do udp se estiver na fila
   int packetSize = Udp.parsePacket();
 
   // Se existir um pacote vindo do servidor, processa
   if (packetSize) {
     processarPacoteUDP();
-  }
-
-  //envia as informações do ultrassonico
-  enviarDadosUltrassonico();
-
+  } 
 }
 
 //********************** Métodos de Inicialização **********************
@@ -99,11 +98,17 @@ void conectarNoWifi() {
 
 //** Método principal de envio dos pacotes
 void enviarDadosViaUDP(const char *dados) {
+
+  
+  Serial.println(F("\n>>Enviado"));
+  Serial.print(dados);
+  
   Udp.beginPacket(ipSocket, serverPort); //abre o socket utilizando o ip:porta
-  Udp.write(dados); //empacota e envia os bits 
+  Udp.write(dados); //empacota e envia os bits
   Udp.endPacket(); //finaliza o envio
 
-  delay(1000); // ****** Aguarda um 1 segundo antes do próximo envio, remover na versão final ******
+  Serial.print("\n");
+  delay(1000); // ******>>>> Aguarda um 1 segundo antes do próximo envio, remover na versão final <<<******
 }
 
 void enviarDadosUltrassonico() {
@@ -118,18 +123,19 @@ void enviarDadosUltrassonico() {
 
 //********************** Métodos de Recebimento **********************
 
-//Processa os dados recebidos no pacote de até 255 bytes(size do buffer) 
+//Processa os dados recebidos no pacote de até 255 bytes(size do buffer)
 void processarPacoteUDP() {
   int len = Udp.read(packetBuffer, 255);
   if (len > 0) {
     packetBuffer[len] = 0;  //reseta o buffer do UDP
   }
-  
   String comando = (String) packetBuffer;
+
+  Serial.println(F("\n>>Recebido:"));
+  Serial.print(packetBuffer);
 
   //recebe as solicitação de comandos do servidor
   //e envia uma resposta a partir do arduino
-
   if (comando.equals(ON_MOTOR_1)) {
     //digitalWrite(MOTOR_1, HIGH);
     enviarDadosViaUDP("MOTOR 1 LIGADO");
@@ -151,6 +157,7 @@ void processarPacoteUDP() {
   }
 
 }
+
 
 
 

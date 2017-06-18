@@ -8,7 +8,6 @@ import java.util.Random;
 
 public class Server {
 
-    public static String sentence;
 
     public static String ipSocket = "192.168.25.124";
     public static int serverPort = 9876;
@@ -53,17 +52,22 @@ public class Server {
         byte[] sendData = new byte[1024];
 
         while (true) {
+            String sentence = "";
             //recebe o datagrama do cliente
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
             serverSocket.receive(receivePacket);
-            sentence = new String(receivePacket.getData());
+            sentence = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
             System.out.println(">>RECEIVED: " + sentence);
 
             //trecho exemplo de requisições para o Arduíno, pode ser removido
-            //desta parte do algoritmo, envia um comando aletório:
-            enviarComandoArduino(serverSocket, receivePacket.getAddress(),
-                    comandos[random.nextInt(comandos.length)]);
+            //envia um comando aletório depois de receber os dados do ultrassonico:
+            try{
+                Float.parseFloat(sentence);
+                enviarComandoArduino(serverSocket, receivePacket.getAddress(),
+                        comandos[random.nextInt(comandos.length)]);
+            }catch(Exception ex){
 
+            } 
         }
     }
 
