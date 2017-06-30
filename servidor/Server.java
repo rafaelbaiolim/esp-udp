@@ -9,7 +9,7 @@ import java.util.Random;
 public class Server {
 
 
-    public static String ipSocket = "192.168.25.124";
+    public static String ipSocket = "10.253.55.3";
     public static int serverPort = 9876;
     public static int arduinoPort = 9875;
 

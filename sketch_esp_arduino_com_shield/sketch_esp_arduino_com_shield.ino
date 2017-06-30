@@ -1,22 +1,24 @@
 #include "WiFiEsp.h"
 #include "WiFiEspUdp.h"
 #include "SoftwareSerial.h"
+//#include "AFMotor.h"
 //#include "Ultrasonic.h"
 
 //********************** Declaração de Variáveis Globais **********************
 /** ARDUINO **/
-#define CH_PD 5 //sinal de controle do CH_PD
-#define RST 6 //pino de controle do RESSET
-SoftwareSerial Serial1(3, 4); // (RX, TX) Faz a simulação do Serial1
+#define CH_PD A3 //sinal de controle do CH_PD
+#define RST A2 //pino de controle do RESSET
+SoftwareSerial Serial1(A5, A4); // (RX, TX) Faz a simulação do Serial1
 
 /*** ULTRASSONICO **/
-#define PIN_TRIGGER 11
-#define PIN_ECHO 10
+#define PIN_TRIGGER A0
+#define PIN_ECHO A1
 
 /** MOTORES **/
-#define MOTOR_1 A1
-#define MOTOR_2 A2
-#define MOTOR_3 A3
+//utilize AF_DCMotor para estas definições
+#define MOTOR_1 0
+#define MOTOR_2 0
+#define MOTOR_3 0
 
 /** CONTRALADOR DOS MOTORES **/
 #define ON_MOTOR_1 "ON_MOTOR_1"
@@ -24,6 +26,11 @@ SoftwareSerial Serial1(3, 4); // (RX, TX) Faz a simulação do Serial1
 #define ON_MOTOR_3 "ON_MOTOR_3"
 #define OFF_MOTOR_1 "OFF_MOTOR_1"
 //defina outras constantes de acionamento aqui
+
+/*** Motores conectados no shield **/
+//AF_DCMotor motor1(1);
+//AF_DCMotor motor2(2);
+//AF_DCMotor motor3(3);
 
 /*** GLOBAIS **/
 char ssid[] = "esp-test";                   // SSID da rede
@@ -120,6 +127,21 @@ void enviarDadosUltrassonico() {
   enviarDadosViaUDP(result);
 }
 
+//************ Métodos de controle sincronizado dos motores **********
+
+/*
+void moverParaFrente(unsigned char velocidade)
+{
+     //FORWARD -> Constante definida em AFMotor.h
+     motor1.setSpeed(velocidade);
+     motor1.run(FORWARD);
+     motor2.setSpeed(velocidade);
+     motor2.run(FORWARD);
+     motor3.setSpeed(velocidade);
+     motor3.run(FORWARD);
+} 
+*/
+
 //********************** Métodos de Recebimento **********************
 
 //Processa os dados recebidos no pacote de até 255 bytes(size do buffer)
@@ -135,18 +157,29 @@ void processarPacoteUDP() {
 
   //recebe as solicitação de comandos do servidor
   //e envia uma resposta a partir do arduino
+
+  /** 
+    para movimentar o robô com velocidade constante é possivel fazer um controle como: 
+    if(comando.equals(FRENTE)){
+      moverParaFrente(VELOCIDADE_PACOTE);
+    }
+  **/
+  
   if (comando.equals(ON_MOTOR_1)) {
     //digitalWrite(MOTOR_1, HIGH);
+    //motor1.setSpeed(VELOCIDADE_PACOTE);  
     enviarDadosViaUDP("MOTOR 1 LIGADO");
   }
 
   if (comando.equals(ON_MOTOR_2)) {
     //digitalWrite(MOTOR_2, HIGH);
+    //motor2.setSpeed(VELOCIDADE_PACOTE);
     enviarDadosViaUDP("MOTOR 2 LIGADO");
   }
 
   if (comando.equals(ON_MOTOR_3)) {
     //digitalWrite(MOTOR_3, HIGH);
+    //motor3.setSpeed(VELOCIDADE_PACOTE);  
     enviarDadosViaUDP("MOTOR 3 LIGADO");
   }
 
